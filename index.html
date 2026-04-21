@@ -2,84 +2,76 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>BOOT SEQUENCE</title>
+<title>ACCESS TERMINAL</title>
 
 <style>
-  body {
-    margin: 0;
-    background: #0b0500;
-    color: #ffb347;
-    font-family: 'Courier New', monospace;
-    overflow: hidden;
-  }
+body {
+  margin:0;
+  background:#0b0500;
+  color:#ffb347;
+  font-family:monospace;
+  overflow:hidden;
+}
 
-  .terminal {
-    padding: 30px;
-    font-size: 15px;
-    line-height: 1.5;
-    text-shadow: 0 0 6px #ff9900;
-  }
+.terminal {
+  padding:25px;
+  font-size:15px;
+  line-height:1.5;
+  text-shadow:0 0 6px #ff9900;
+}
 
-  .line { white-space: pre-wrap; }
+.line { white-space:pre-wrap; }
 
-  .prompt { color: #ffd27a; }
+.prompt { color:#ffd27a; }
 
-  .cursor::after {
-    content: '█';
-    animation: blink 1s infinite;
-  }
+.cursor::after {
+  content:"█";
+  animation:blink 1s infinite;
+}
 
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
+@keyframes blink { 50%{opacity:0;} }
 
-  /* CRT */
-  body::before {
-    content:'';
-    position:fixed;
-    width:100%;
-    height:100%;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(0,0,0,0.2),
-      rgba(0,0,0,0.2) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-    pointer-events:none;
-  }
+body::before {
+  content:'';
+  position:fixed;
+  width:100%;
+  height:100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.2),
+    rgba(0,0,0,0.2) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
 
-  /* Vignette */
-  body::after {
-    content:'';
-    position:fixed;
-    width:100%;
-    height:100%;
-    background: radial-gradient(circle, transparent 60%, black 100%);
-    pointer-events:none;
-  }
+body::after {
+  content:'';
+  position:fixed;
+  width:100%;
+  height:100%;
+  background: radial-gradient(circle, transparent 60%, black 100%);
+}
 
-  /* GLITCH */
-  .glitch {
-    animation: glitch 0.2s 5;
-  }
+.glitch {
+  animation: glitch 0.15s 6;
+}
 
-  @keyframes glitch {
-    0% { transform: translate(0); }
-    25% { transform: translate(2px, -2px); }
-    50% { transform: translate(-2px, 2px); }
-    75% { transform: translate(1px, -1px); }
-    100% { transform: translate(0); }
-  }
+@keyframes glitch {
+  0%{transform:translate(0)}
+  25%{transform:translate(2px,-2px)}
+  50%{transform:translate(-2px,2px)}
+  75%{transform:translate(1px,-1px)}
+  100%{transform:translate(0)}
+}
 
-  /* FADE OUT */
-  .fade-out {
-    animation: fadeOut 1s forwards;
-  }
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
 
-  @keyframes fadeOut {
-    to { opacity: 0; }
-  }
+@keyframes fadeOut {
+  to { opacity:0 }
+}
 </style>
 </head>
 
@@ -90,82 +82,156 @@
 <script>
 const term = document.getElementById("term");
 
-function line(text="") {
-  const div = document.createElement("div");
-  div.className = "line";
-  div.textContent = text;
-  term.appendChild(div);
-  return div;
+// 🔊 Som simples de tecla
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+function keySound(){
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type="square";
+  o.frequency.value = 200 + Math.random()*200;
+  g.gain.value = 0.02;
+  o.connect(g);
+  g.connect(ctx.destination);
+  o.start();
+  o.stop(ctx.currentTime + 0.03);
 }
 
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+// helpers
+function line(t=""){
+  const d=document.createElement("div");
+  d.className="line";
+  d.textContent=t;
+  term.appendChild(d);
+  term.scrollTop = term.scrollHeight;
+  return d;
+}
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 async function type(el, text, speed=40){
-  for(let i=0;i<text.length;i++){
-    el.textContent += text[i];
+  for(let c of text){
+    el.textContent += c;
+    keySound();
     await sleep(speed);
   }
 }
 
+// prompt com typing
 async function prompt(cmd){
-  const l = document.createElement("div");
-  l.className = "line";
-  l.innerHTML = `<span class="prompt">swordfish@retro:~$ </span>`;
+  const l=document.createElement("div");
+  l.className="line";
+  l.innerHTML=`<span class="prompt">root@matrix:~# </span>`;
   
-  const cmdSpan = document.createElement("span");
-  l.appendChild(cmdSpan);
+  const span=document.createElement("span");
+  l.appendChild(span);
 
-  const cursor = document.createElement("span");
-  cursor.className = "cursor";
+  const cursor=document.createElement("span");
+  cursor.className="cursor";
   l.appendChild(cursor);
 
   term.appendChild(l);
 
-  await type(cmdSpan, cmd, 50);
+  await type(span, cmd, 40);
   cursor.remove();
   await sleep(200);
 }
 
-async function boot(){
+// espera ENTER real
+function waitEnter(){
+  return new Promise(resolve=>{
+    function handler(e){
+      if(e.key==="Enter"){
+        document.removeEventListener("keydown", handler);
+        resolve();
+      }
+    }
+    document.addEventListener("keydown", handler);
+  });
+}
+
+// INPUT fake (login)
+async function inputPrompt(label, hidden=false){
+  const l=document.createElement("div");
+  l.className="line";
+  l.textContent = label;
+  term.appendChild(l);
+
+  let value="";
+  const inputLine=document.createElement("div");
+  inputLine.className="line";
+  term.appendChild(inputLine);
+
+  return new Promise(resolve=>{
+    function handler(e){
+      if(e.key==="Enter"){
+        document.removeEventListener("keydown", handler);
+        resolve(value);
+      } else if(e.key==="Backspace"){
+        value=value.slice(0,-1);
+      } else if(e.key.length===1){
+        value+=e.key;
+      }
+
+      inputLine.textContent = hidden ? "*".repeat(value.length) : value;
+    }
+    document.addEventListener("keydown", handler);
+  });
+}
+
+// FLOW
+async function run(){
+
+  // BOOT
   line("[ OK ] Initializing memory...");
-  await sleep(300);
-  line("[ OK ] Loading kernel modules...");
-  await sleep(300);
-  line("[ OK ] Mounting filesystems...");
-  await sleep(300);
-  line("[ OK ] Network interface up...");
-  await sleep(300);
+  await sleep(200);
+  line("[ OK ] Loading kernel...");
+  await sleep(200);
+  line("[ OK ] Starting services...");
+  await sleep(200);
   line("");
 
-  await prompt("whoami");
-  line("researcher");
+  // LOGIN
+  const user = await inputPrompt("login:");
+  const pass = await inputPrompt("password:", true);
+
+  line("");
+  line("Authenticating...");
+  await sleep(500);
+
+  line("Access granted.");
   await sleep(300);
 
-  await prompt("uname -a");
-  line("Linux retro-terminal 5.15.0 x86_64");
-  await sleep(300);
+  line("");
+  line("Press ENTER to continue...");
+  await waitEnter();
+
+  // COMMANDS
+  await prompt("whoami");
+  line(user || "guest");
+
+  await prompt("hostname");
+  line("nexus-core");
 
   await prompt("cat banner.txt");
-  line("ACCESSING SYSTEM...");
-  await sleep(300);
+  line(">> ACCESSING SECURE NODE");
 
   await prompt('echo "BEM VINDO"');
   line("BEM VINDO");
 
-  // glitch effect
+  // glitch
   term.classList.add("glitch");
   await sleep(500);
 
-  await sleep(2500);
+  await sleep(2000);
 
-  // fade + redirect
+  // fade
   document.body.classList.add("fade-out");
   await sleep(1000);
 
-  window.location.href = "main.html";
+  window.location.href="main.html";
 }
 
-boot();
+run();
 </script>
 
 </body>
