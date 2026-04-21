@@ -5,272 +5,1000 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NEXUS OPERATOR</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --pink:#ff2e88;
-  --blue:#00e5ff;
-  --bg:#050507;
+  --gold: #c8a84b;
+  --gold-bright: #f0c96e;
+  --gold-dim: #7a6230;
+  --amber: #ff8c00;
+  --red: #cc2200;
+  --red-bright: #ff3300;
+  --steel: #8ab4c2;
+  --steel-bright: #c0dde8;
+  --bg: #06080a;
+  --bg2: #0c0f12;
+  --bg3: #101418;
+  --text: #c8c0b0;
+  --text-dim: #6e6860;
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  margin:0;
-  background:var(--bg);
-  color:white;
-  font-family:'Share Tech Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  overflow-x: hidden;
 }
 
-/* NAV */
+/* ─── SCANLINES + GRAIN OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.04) 2px,
+      rgba(0,0,0,0.04) 4px
+    );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── NAV ─── */
 .nav {
-  position:fixed;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  padding:15px;
-  backdrop-filter:blur(10px);
-  z-index:1000;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 60px;
+  background: linear-gradient(to bottom, rgba(6,8,10,0.98), transparent);
+  z-index: 1000;
+  border-bottom: 1px solid rgba(200,168,75,0.1);
 }
 
-.nav a { color:#aaa; text-decoration:none; }
-.nav a:hover { color:var(--blue); }
+.nav-logo {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
 
-/* HERO */
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ─── HERO ─── */
 .hero {
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Alita-style background orb */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  right: -10%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(200,168,75,0.06) 0%,
+    rgba(204,34,0,0.04) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+}
+
+/* Geometric frame lines */
+.hero-frame {
+  position: absolute;
+  top: 80px;
+  right: 60px;
+  width: 300px;
+  height: 300px;
+  border: 1px solid rgba(200,168,75,0.15);
+  pointer-events: none;
+}
+
+.hero-frame::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: -20px;
+  bottom: -20px;
+  border: 1px solid rgba(200,168,75,0.07);
+}
+
+.hero-eyecatch {
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-eyecatch::before {
+  content: '';
+  display: inline-block;
+  width: 30px;
+  height: 1px;
+  background: var(--gold-dim);
 }
 
 .hero h1 {
-  font-size:60px;
-  color:var(--blue);
+  font-family: 'Exo 2', sans-serif;
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 900;
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  color: var(--text);
+  animation: fadeUp 1s ease both;
 }
 
-/* SOCIAL CARDS */
+.hero h1 .accent {
+  color: var(--gold);
+  display: block;
+  -webkit-text-stroke: 1px var(--gold);
+}
+
+.hero-sub {
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  max-width: 460px;
+  line-height: 1.8;
+  animation: fadeUp 1s 0.2s ease both;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+/* Social links */
 .social {
-  display:flex;
-  gap:15px;
-  margin-top:20px;
+  display: flex;
+  gap: 10px;
+  margin-top: 40px;
+  animation: fadeUp 1s 0.4s ease both;
+  opacity: 0;
+  animation-fill-mode: forwards;
 }
 
 .social a {
-  padding:10px 15px;
-  border:1px solid rgba(255,255,255,0.1);
-  text-decoration:none;
-  color:#aaa;
-  transition:0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: 1px solid rgba(200,168,75,0.25);
+  text-decoration: none;
+  color: var(--text-dim);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.social a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(200,168,75,0.06);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
 }
 
 .social a:hover {
-  border-color:var(--pink);
-  color:var(--pink);
+  color: var(--gold);
+  border-color: var(--gold);
 }
 
-/* ARSENAL */
-.arsenal {
-  padding:60px;
+.social a:hover::before {
+  transform: scaleX(1);
 }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SECTION HEADER ─── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.section-header h2 {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.section-header h2 span {
+  color: var(--gold);
+}
+
+.section-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(200,168,75,0.3), transparent);
+}
+
+.section-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  border: 1px solid rgba(200,168,75,0.2);
+  padding: 3px 8px;
+}
+
+/* ─── PANELS ─── */
+.panels {
+  padding: 80px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+/* ─── ARSENAL ─── */
 .arsenal-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1px solid rgba(200,168,75,0.15);
 }
 
-.tool {
-  border:1px solid rgba(0,229,255,0.3);
-  padding:15px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#0a0a0f;
+.tool-card {
+  position: relative;
+  padding: 28px 22px;
+  border-right: 1px solid rgba(200,168,75,0.1);
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  background: var(--bg2);
+  transition: all 0.3s;
+  cursor: default;
+  overflow: hidden;
 }
 
-.dot {
-  width:8px;
-  height:8px;
-  border-radius:50%;
+.tool-card:nth-child(5n) {
+  border-right: none;
 }
 
-/* TERMINAL */
+.tool-card:nth-child(n+6) {
+  border-bottom: none;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 0;
+  background: var(--tool-color, var(--gold));
+  transition: height 0.4s ease;
+}
+
+.tool-card:hover::before {
+  height: 100%;
+}
+
+.tool-card:hover {
+  background: rgba(200,168,75,0.04);
+}
+
+.tool-card:hover .tool-name {
+  color: var(--gold-bright);
+}
+
+.tool-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: var(--tool-color, var(--gold));
+  opacity: 0.15;
+  margin-bottom: 14px;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.tool-card:hover .tool-icon {
+  opacity: 0.4;
+}
+
+.tool-name {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--text);
+  transition: color 0.3s;
+  text-transform: uppercase;
+}
+
+.tool-category {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+/* ─── LANGUAGES CARD ─── */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid rgba(200,168,75,0.15);
+}
+
+/* reuse .tool-card styles */
+.lang-card {
+  position: relative;
+  padding: 24px 20px;
+  border-right: 1px solid rgba(200,168,75,0.1);
+  border-bottom: 1px solid rgba(200,168,75,0.1);
+  background: var(--bg2);
+  transition: all 0.3s;
+  cursor: default;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lang-card:nth-child(4n) { border-right: none; }
+.lang-card:nth-child(n+5) { border-bottom: none; }
+
+.lang-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--lang-color, var(--gold));
+  transition: width 0.4s ease;
+}
+
+.lang-card:hover::before { width: 100%; }
+.lang-card:hover { background: rgba(200,168,75,0.03); }
+
+.lang-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lang-color, var(--gold));
+  flex-shrink: 0;
+  box-shadow: 0 0 8px var(--lang-color, var(--gold));
+}
+
+.lang-name {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+
+.lang-type {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* ─── TERMINAL ─── */
 #terminalModal {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.96);
-  display:none;
-  justify-content:center;
-  align-items:center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
 }
+
+.terminal-wrapper {
+  width: 760px;
+  max-width: 95vw;
+  border: 1px solid rgba(200,168,75,0.5);
+  background: var(--bg);
+  position: relative;
+}
+
+.terminal-titlebar {
+  background: rgba(200,168,75,0.08);
+  border-bottom: 1px solid rgba(200,168,75,0.2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.terminal-title {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.terminal-close {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border: 1px solid rgba(200,168,75,0.2);
+  transition: all 0.2s;
+}
+.terminal-close:hover { color: var(--red-bright); border-color: var(--red-bright); }
 
 .terminal {
-  width:800px;
-  height:450px;
-  background:black;
-  border:1px solid var(--blue);
-  padding:20px;
-  overflow:auto;
+  padding: 20px 24px;
+  height: 420px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.9;
+  scroll-behavior: smooth;
 }
 
-.line { color:#aaa; }
-.cmd { color:var(--pink); }
-.val { color:var(--blue); }
+.terminal::-webkit-scrollbar { width: 4px; }
+.terminal::-webkit-scrollbar-track { background: transparent; }
+.terminal::-webkit-scrollbar-thumb { background: rgba(200,168,75,0.3); }
 
-.cursor::after {
-  content:"█";
-  animation:blink 1s infinite;
+.t-line { color: #888; }
+.t-cmd { color: var(--gold); }
+.t-val { color: var(--steel-bright); }
+.t-err { color: var(--red-bright); }
+.t-info { color: var(--gold-dim); }
+
+.prompt-line {
+  display: flex;
+  align-items: center;
 }
 
-@keyframes blink { 50%{opacity:0;} }
+.prompt-text { color: var(--gold); }
+.prompt-input { color: #ddd; }
 
+.cursor-blink::after {
+  content: '█';
+  color: var(--gold);
+  animation: blink 1s steps(1) infinite;
+  font-size: 12px;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 30px 60px;
+  border-top: 1px solid rgba(200,168,75,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer .f-left {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+footer .f-right {
+  font-size: 11px;
+  color: var(--gold-dim);
+  letter-spacing: 1px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .nav { padding: 14px 24px; }
+  .hero { padding: 100px 24px 60px; }
+  .panels { padding: 50px 24px; }
+  .arsenal-grid { grid-template-columns: repeat(2, 1fr); }
+  .arsenal-grid .tool-card:nth-child(2n) { border-right: none; }
+  .arsenal-grid .tool-card { border-bottom: 1px solid rgba(200,168,75,0.1); }
+  .lang-grid { grid-template-columns: repeat(2, 1fr); }
+  .lang-card:nth-child(2n) { border-right: none; }
+  footer { flex-direction: column; gap: 10px; }
+}
 </style>
 </head>
 
 <body>
 
+<!-- NAV -->
 <nav class="nav">
-  <a href="#">Research</a>
-  <a href="#">Writeups</a>
-  <a href="#">About</a>
-  <a href="#" onclick="openTerminal()">Certificações</a>
-  <a href="#">Contato</a>
+  <div class="nav-logo">Nexus // Operator</div>
+  <div class="nav-links">
+    <a href="#">Research</a>
+    <a href="#">Writeups</a>
+    <a href="#">About</a>
+    <a href="#" onclick="openTerminal(); return false;">Certs</a>
+    <a href="#">Contato</a>
+  </div>
 </nav>
 
-<div class="hero">
-  <h1>NEXUS OPERATOR</h1>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-frame"></div>
 
-  <!-- SOCIAL -->
+  <div class="hero-eyecatch">Pentest &amp; Red Team Operator</div>
+
+  <h1>
+    NEXUS
+    <span class="accent">OPERATOR</span>
+  </h1>
+
+  <p class="hero-sub">
+    Cybersecurity professional focused on red team operations,<br>
+    adversarial simulation and post-exploitation techniques.<br>
+    <span style="color: var(--gold-dim)">// status: active engagement</span>
+  </p>
+
   <div class="social">
-    <a href="#">LinkedIn</a>
-    <a href="#">HackTheBox</a>
-    <a href="#">TryHackMe</a>
-    <a href="#">GitHub</a>
-  </div>
-</div>
-
-<!-- ARSENAL -->
-<section class="arsenal">
-  <h2 style="color:var(--blue)">Arsenal</h2>
-
-  <div class="arsenal-grid">
-    <div class="tool"><div class="dot" style="background:#00e5ff"></div> Burp Suite Pro</div>
-    <div class="tool"><div class="dot" style="background:#ff8800"></div> BloodHound</div>
-    <div class="tool"><div class="dot" style="background:#ff2e88"></div> Impacket</div>
-    <div class="tool"><div class="dot" style="background:#00ff9c"></div> Metasploit</div>
-
-    <div class="tool"><div class="dot" style="background:#00e5ff"></div> Nmap / Naabu</div>
-    <div class="tool"><div class="dot" style="background:#ff8800"></div> Ghidra / x64dbg</div>
-    <div class="tool"><div class="dot" style="background:#ff2e88"></div> CrackMapExec</div>
-    <div class="tool"><div class="dot" style="background:#00ff9c"></div> Nuclei / FFUF</div>
-
-    <div class="tool"><div class="dot" style="background:#00e5ff"></div> Wireshark</div>
-    <div class="tool"><div class="dot" style="background:#aa66ff"></div> Python / Bash</div>
-    <div class="tool"><div class="dot" style="background:#ffaa00"></div> PowerShell / Rust</div>
-    <div class="tool"><div class="dot" style="background:#00ffaa"></div> Fortinet</div>
+    <a href="#">⬡ LinkedIn</a>
+    <a href="#">⬡ HackTheBox</a>
+    <a href="#">⬡ TryHackMe</a>
+    <a href="#">⬡ GitHub</a>
   </div>
 </section>
 
-<!-- TERMINAL -->
+<!-- PANELS -->
+<div class="panels">
+
+  <!-- ARSENAL -->
+  <section>
+    <div class="section-header">
+      <span class="section-tag">01</span>
+      <h2>Arse<span>nal</span></h2>
+    </div>
+
+    <div class="arsenal-grid">
+
+      <div class="tool-card" style="--tool-color:#f05030">
+        <div class="tool-icon" style="background:#f05030">⚡</div>
+        <div class="tool-name">Burp Suite</div>
+        <div class="tool-category">Web Exploitation</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#cc4444">
+        <div class="tool-icon" style="background:#cc4444">🩸</div>
+        <div class="tool-name">BloodHound</div>
+        <div class="tool-category">AD Enumeration</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#4499ff">
+        <div class="tool-icon" style="background:#4499ff">🎯</div>
+        <div class="tool-name">Metasploit</div>
+        <div class="tool-category">Exploitation FW</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#00cc88">
+        <div class="tool-icon" style="background:#00cc88">🔍</div>
+        <div class="tool-name">Nmap</div>
+        <div class="tool-category">Recon / Scanning</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#cc8800">
+        <div class="tool-icon" style="background:#cc8800">🔬</div>
+        <div class="tool-name">radare2</div>
+        <div class="tool-category">Reverse Eng.</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#ff6688">
+        <div class="tool-icon" style="background:#ff6688">🗺️</div>
+        <div class="tool-name">netexec</div>
+        <div class="tool-category">AD / SMB Attacks</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#3399ff">
+        <div class="tool-icon" style="background:#3399ff">🛡️</div>
+        <div class="tool-name">Fortinet</div>
+        <div class="tool-category">Network Security</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#ff4422">
+        <div class="tool-icon" style="background:#ff4422">🦅</div>
+        <div class="tool-name">Falcon EDR</div>
+        <div class="tool-category">Endpoint Detection</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#9966ff">
+        <div class="tool-icon" style="background:#9966ff">🕸️</div>
+        <div class="tool-name">Maltego</div>
+        <div class="tool-category">OSINT / Graphs</div>
+      </div>
+
+      <div class="tool-card" style="--tool-color:#00aacc">
+        <div class="tool-icon" style="background:#00aacc">🌐</div>
+        <div class="tool-name">Amass</div>
+        <div class="tool-category">Subdomain Enum.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LANGUAGES -->
+  <section>
+    <div class="section-header">
+      <span class="section-tag">02</span>
+      <h2>Pro<span>gramação</span></h2>
+    </div>
+
+    <div class="lang-grid">
+
+      <div class="lang-card" style="--lang-color:#3572A5">
+        <div class="lang-dot" style="--lang-color:#3572A5"></div>
+        <div>
+          <div class="lang-name">Python</div>
+          <div class="lang-type">Scripting / Automation</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#DEA584">
+        <div class="lang-dot" style="--lang-color:#DEA584"></div>
+        <div>
+          <div class="lang-name">Rust</div>
+          <div class="lang-type">Systems / Malware Dev</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#00ADD8">
+        <div class="lang-dot" style="--lang-color:#00ADD8"></div>
+        <div>
+          <div class="lang-name">Go</div>
+          <div class="lang-type">Tools / C2 Dev</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#f34b7d">
+        <div class="lang-dot" style="--lang-color:#f34b7d"></div>
+        <div>
+          <div class="lang-name">C / C++</div>
+          <div class="lang-type">Low Level / Exploits</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#6E4C13">
+        <div class="lang-dot" style="--lang-color:#c88030"></div>
+        <div>
+          <div class="lang-name">Assembly</div>
+          <div class="lang-type">Shellcode / RE</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#89e051">
+        <div class="lang-dot" style="--lang-color:#89e051"></div>
+        <div>
+          <div class="lang-name">Bash</div>
+          <div class="lang-type">Scripting / Post-Expl.</div>
+        </div>
+      </div>
+
+      <div class="lang-card" style="--lang-color:#012456">
+        <div class="lang-dot" style="--lang-color:#5ba0e0"></div>
+        <div>
+          <div class="lang-name">PowerShell</div>
+          <div class="lang-type">Windows / AD Attacks</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-left">© NEXUS OPERATOR // ALL RIGHTS RESERVED</div>
+  <div class="f-right">// SYSTEM ONLINE</div>
+</footer>
+
+<!-- TERMINAL MODAL -->
 <div id="terminalModal">
-  <div class="terminal" id="term"></div>
+  <div class="terminal-wrapper">
+    <div class="terminal-titlebar">
+      <span class="terminal-title">// Certification Terminal</span>
+      <span class="terminal-close" onclick="closeTerminal()">[ESC] CLOSE</span>
+    </div>
+    <div class="terminal" id="term"></div>
+  </div>
 </div>
 
 <script>
 const modal = document.getElementById("terminalModal");
-const term = document.getElementById("term");
+const term  = document.getElementById("term");
 
-let input="";
-let inputSpan;
+let inputBuffer = "";
+let inputSpan   = null;
 
-// FILESYSTEM
+// ── filesystem ──
 const fs = {
-  certs: ["CEH","DCPT","CRTA","MCRTA"],
-  notes: ["lab: hackthebox","focus: AD attacks","status: active"]
+  certs: {
+    type: "dir",
+    items: {
+      "CEH.txt":   ["Certified Ethical Hacker", "Issuer: EC-Council", "Status: ACTIVE"],
+      "DCPT.txt":  ["Certified Penetration Tester", "Issuer: Desec Security", "Status: ACTIVE"],
+      "CRTA.txt":  ["Certified Red Team Analyst", "Issuer: Altered Security", "Status: ACTIVE"],
+      "MCRTA.txt": ["Multi-Cloud Red Team Analyst", "Issuer: Cyberwarfare Labs", "Status: ACTIVE"],
+    }
+  },
+  notes: {
+    type: "dir",
+    items: {
+      "lab.txt":    ["platform: HackTheBox", "focus: Active Directory attacks", "current: AD CS exploitation"],
+      "status.txt": ["engagement: active", "priority: red team ops", "next: CRTO prep"],
+    }
+  }
 };
 
-function openTerminal(){
-  modal.style.display="flex";
-  term.innerHTML="";
+let cwd = []; // current working directory path
 
-  print("Certification Terminal");
-  print("type 'help'");
-  newPrompt();
+function resolvePath(path) {
+  if (!path || path === "~") return [];
+  if (path.startsWith("/")) {
+    const parts = path.split("/").filter(Boolean);
+    return parts;
+  }
+  const parts = [...cwd, ...path.split("/").filter(Boolean)];
+  // handle ".."
+  const resolved = [];
+  for (const p of parts) {
+    if (p === "..") resolved.pop();
+    else resolved.push(p);
+  }
+  return resolved;
 }
 
-function print(text, cls="line"){
-  const d=document.createElement("div");
-  d.className=cls;
-  d.textContent=text;
-  term.appendChild(d);
-  term.scrollTop=term.scrollHeight;
+function getNode(pathArr) {
+  let node = { type: "dir", items: fs };
+  for (const seg of pathArr) {
+    if (node.type !== "dir" || !node.items[seg]) return null;
+    node = node.items[seg];
+  }
+  return node;
 }
 
-function newPrompt(){
-  const line=document.createElement("div");
-  line.innerHTML=`<span class="cmd">user@nexus:~$ </span><span id="input"></span><span class="cursor"></span>`;
+function cwdStr() {
+  return cwd.length === 0 ? "~" : "~/" + cwd.join("/");
+}
+
+// ── render ──
+function print(text, cls = "t-line") {
+  const d = document.createElement("div");
+  d.className = cls;
+  d.textContent = text;
+  term.insertBefore(d, term.lastChild); // before prompt
+  scrollBottom();
+}
+
+function scrollBottom() {
+  term.scrollTop = term.scrollHeight;
+}
+
+function newPrompt() {
+  // Remove existing active prompt if any
+  const old = term.querySelector(".active-prompt");
+  if (old) old.classList.remove("active-prompt");
+
+  const line = document.createElement("div");
+  line.className = "prompt-line active-prompt";
+  line.innerHTML = `<span class="prompt-text">nexus@operator:${cwdStr()}$ </span><span class="prompt-input" id="prompt-in"></span><span class="cursor-blink"></span>`;
   term.appendChild(line);
-  inputSpan=line.querySelector("#input");
+  inputSpan = line.querySelector("#prompt-in");
+  scrollBottom();
 }
 
-document.addEventListener("keydown", e=>{
-  if(modal.style.display!=="flex") return;
+// ── commands ──
+function execute(rawCmd) {
+  const trimmed = rawCmd.trim();
 
-  if(e.key==="Escape"){ modal.style.display="none"; return; }
-
-  if(e.key==="Backspace"){
-    input=input.slice(0,-1);
-  }
-  else if(e.key==="Enter"){
-    execute(input.trim());
-    input="";
-    return;
-  }
-  else if(e.key.length===1){
-    input+=e.key;
+  // freeze current prompt (remove cursor)
+  const active = term.querySelector(".active-prompt");
+  if (active) {
+    active.classList.remove("active-prompt");
+    const cur = active.querySelector(".cursor-blink");
+    if (cur) cur.remove();
   }
 
-  inputSpan.textContent=input;
-});
+  if (!trimmed) { newPrompt(); return; }
 
-function execute(cmd){
-  print("user@nexus:~$ "+cmd,"cmd");
+  // echo
+  const echo = document.createElement("div");
+  echo.className = "t-cmd";
+  echo.textContent = `nexus@operator:${cwdStr()}$ ${trimmed}`;
+  term.appendChild(echo);
 
-  const args = cmd.split(" ");
+  const args  = trimmed.split(/\s+/);
+  const cmd   = args[0];
+  const arg1  = args[1];
 
-  switch(args[0]){
+  switch (cmd) {
 
     case "help":
-      print("ls | cat certs | cat notes | clear | exit");
+      ["ls              — list directory contents",
+       "ls -l           — detailed list",
+       "cd <dir>        — change directory",
+       "cat <file>      — show file contents",
+       "pwd             — current path",
+       "clear           — clear terminal",
+       "exit            — close terminal",
+      ].forEach(l => print(l, "t-info"));
       break;
 
-    case "ls":
-      print("certs notes");
+    case "pwd":
+      print("/" + (cwd.length ? cwd.join("/") : ""), "t-val");
       break;
 
-    case "cat":
-      if(fs[args[1]]){
-        fs[args[1]].forEach(v=>print(v,"val"));
-      } else {
-        print("file not found");
-      }
+    case "ls": {
+      const target = arg1 ? resolvePath(arg1) : cwd;
+      const node   = getNode(target);
+      if (!node) { print(`ls: cannot access '${arg1}': No such file or directory`, "t-err"); break; }
+      if (node.type !== "dir") { print(target[target.length - 1], "t-val"); break; }
+
+      const detailed = arg1 === "-l" || args[2] === "-l" || args.includes("-l");
+      const items = Object.keys(detailed ? getNode(arg1 && arg1 !== "-l" ? resolvePath(arg1) : cwd).items || {} : node.items);
+      const realNode = (arg1 && arg1 !== "-l") ? (getNode(resolvePath(arg1)) || node) : node;
+      const realItems = Object.keys(realNode.items);
+
+      if (realItems.length === 0) { print("(empty)", "t-info"); break; }
+      realItems.forEach(name => {
+        const child = realNode.items[name];
+        if (detailed) {
+          const type = child.type === "dir" ? "drwxr-xr-x" : "-rw-r--r--";
+          print(`${type}  ${name}`, "t-val");
+        } else {
+          print(name, "t-val");
+        }
+      });
       break;
+    }
+
+    case "cd": {
+      if (!arg1 || arg1 === "~") { cwd = []; break; }
+      const target = resolvePath(arg1);
+      const node   = getNode(target);
+      if (!node) { print(`cd: ${arg1}: No such file or directory`, "t-err"); break; }
+      if (node.type !== "dir") { print(`cd: ${arg1}: Not a directory`, "t-err"); break; }
+      cwd = target;
+      break;
+    }
+
+    case "cat": {
+      if (!arg1) { print("cat: missing operand", "t-err"); break; }
+      const target = resolvePath(arg1);
+      const node   = getNode(target);
+      if (!node) { print(`cat: ${arg1}: No such file or directory`, "t-err"); break; }
+      if (node.type === "dir") { print(`cat: ${arg1}: Is a directory`, "t-err"); break; }
+      node.forEach(line => print(line, "t-val"));
+      break;
+    }
 
     case "clear":
-      term.innerHTML="";
+      term.innerHTML = "";
       break;
 
     case "exit":
-      modal.style.display="none";
+      closeTerminal();
       return;
 
     default:
-      print("command not found");
+      print(`nexus: command not found: ${cmd}`, "t-err");
+      print(`type 'help' to see available commands`, "t-info");
   }
 
   newPrompt();
+}
+
+// ── keyboard ──
+document.addEventListener("keydown", e => {
+  if (modal.style.display !== "flex") return;
+
+  if (e.key === "Escape") { closeTerminal(); return; }
+
+  if (e.key === "Backspace") {
+    inputBuffer = inputBuffer.slice(0, -1);
+  } else if (e.key === "Enter") {
+    execute(inputBuffer);
+    inputBuffer = "";
+    return;
+  } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+    inputBuffer += e.key;
+  }
+
+  if (inputSpan) inputSpan.textContent = inputBuffer;
+});
+
+// ── open / close ──
+function openTerminal() {
+  modal.style.display = "flex";
+  term.innerHTML = "";
+  inputBuffer = "";
+  cwd = [];
+
+  print("┌─────────────────────────────────────────────┐", "t-info");
+  print("│  NEXUS OPERATOR // CERTIFICATION TERMINAL   │", "t-info");
+  print("└─────────────────────────────────────────────┘", "t-info");
+  print("", "t-line");
+  print("type 'ls' to list directories, 'help' for all commands", "t-info");
+  print("", "t-line");
+  newPrompt();
+}
+
+function closeTerminal() {
+  modal.style.display = "none";
+  inputBuffer = "";
 }
 </script>
 
