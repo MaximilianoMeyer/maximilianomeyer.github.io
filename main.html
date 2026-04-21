@@ -3,40 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS // CYBER</title>
+<title>NEXUS CYBER</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --pink: #ff2e88;
-  --blue: #00e5ff;
-  --bg: #050507;
-  --card: #0d0d12;
+  --pink:#ff2e88;
+  --blue:#00e5ff;
 }
 
 body {
   margin:0;
-  background: radial-gradient(circle at top, #0a0a1a, #050507);
+  background:#050507;
   color:white;
   font-family:'Share Tech Mono', monospace;
 }
 
 /* NAV */
-nav {
+.nav {
   position:fixed;
+  top:0;
   width:100%;
-  padding:15px 30px;
-  backdrop-filter: blur(10px);
   display:flex;
-  justify-content:space-between;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+  justify-content:center;
+  gap:40px;
+  padding:15px;
+  backdrop-filter: blur(10px);
 }
 
-.logo {
-  color:var(--pink);
-  font-family:'Orbitron';
+.nav a {
+  color:#aaa;
+  text-decoration:none;
 }
+
+.nav a:hover { color:var(--blue); }
 
 /* HERO */
 .hero {
@@ -48,130 +49,192 @@ nav {
 }
 
 .hero h1 {
-  font-size:70px;
+  font-size:60px;
   color:var(--blue);
-  text-shadow:0 0 20px var(--blue);
 }
 
-.hero p {
-  color:#aaa;
-  max-width:500px;
-}
-
-/* GRID */
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-  padding:60px;
-}
-
-.card {
-  background:var(--card);
-  padding:20px;
-  border:1px solid rgba(255,255,255,0.05);
-  transition:0.3s;
-}
-
-.card:hover {
-  border-color:var(--pink);
-  box-shadow:0 0 20px rgba(255,46,136,0.4);
-}
-
-.card h3 {
-  color:var(--pink);
-}
-
-/* TERMINAL (reposicionado) */
-.terminal-box {
+/* TERMINAL */
+#terminalModal {
   position:fixed;
-  right:20px;
-  bottom:20px;
-  width:300px;
+  inset:0;
+  background:rgba(0,0,0,0.96);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.terminal {
+  width:800px;
+  height:450px;
   background:black;
   border:1px solid var(--blue);
-  padding:15px;
-  font-size:12px;
-  box-shadow:0 0 20px var(--blue);
+  padding:20px;
+  overflow:auto;
 }
 
-.line { color:#888; }
+.line { color:#aaa; }
 .cmd { color:var(--pink); }
 .val { color:var(--blue); }
 
-/* SECTION */
-section {
-  padding:80px 60px;
+.cursor::after {
+  content:"█";
+  animation:blink 1s infinite;
 }
 
-.title {
-  font-family:'Orbitron';
-  color:var(--blue);
-  margin-bottom:20px;
-}
+@keyframes blink { 50%{opacity:0;} }
 </style>
 </head>
 
 <body>
 
-<nav>
-  <div class="logo">NEXUS//CYBER</div>
+<nav class="nav">
+  <a href="#">Research</a>
+  <a href="#">Writeups</a>
+  <a href="#">About</a>
+  <a href="#" onclick="openTerminal()">Certificações</a>
+  <a href="#">Contato</a>
 </nav>
 
 <div class="hero">
-  <h1>SEU NOME</h1>
-  <p>Security Researcher // Offensive Security // Reverse Engineering</p>
+  <h1>NEXUS OPERATOR</h1>
 </div>
 
-<section>
-  <div class="title">Research</div>
-  <div class="grid">
-    <div class="card">
-      <h3>SSRF → RCE</h3>
-      <p>Exploração completa em ambiente cloud.</p>
-    </div>
-
-    <div class="card">
-      <h3>Pivoting</h3>
-      <p>Movimentação lateral em redes segmentadas.</p>
-    </div>
-
-    <div class="card">
-      <h3>Malware</h3>
-      <p>Análise de loader polimórfico.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="title">Writeups</div>
-  <div class="grid">
-    <div class="card">
-      <h3>HTB Machine</h3>
-      <p>Enum → Foothold → PrivEsc</p>
-    </div>
-
-    <div class="card">
-      <h3>AD Attack</h3>
-      <p>Kerberoasting + DCSync</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="title">About</div>
-  <p style="max-width:600px;color:#aaa;">
-    Offensive security focado em web, AD e engenharia reversa.
-  </p>
-</section>
-
-<!-- TERMINAL -->
-<div class="terminal-box">
-  <div class="line"><span class="cmd">$</span> cat certs.txt</div>
-  <div class="val">OSCP // pending</div>
-  <div class="val">CEH // 2048</div>
-  <div class="line"><span class="cmd">$</span> _</div>
+<div id="terminalModal">
+  <div class="terminal" id="term"></div>
 </div>
+
+<script>
+const modal = document.getElementById("terminalModal");
+const term = document.getElementById("term");
+
+let input = "";
+let history = [];
+let historyIndex = 0;
+let inputSpan;
+
+// fake filesystem
+const fs = {
+  certs: [
+    "OSCP (in progress)",
+    "CEH",
+    "eJPT"
+  ],
+  notes: [
+    "target: corp.local",
+    "status: recon phase",
+    "vector: web + AD"
+  ]
+};
+
+function openTerminal(){
+  modal.style.display="flex";
+  term.innerHTML="";
+  print("NEXUS CERTIFICATION TERMINAL");
+  print("type 'help'");
+  newPrompt();
+}
+
+function print(text, cls="line"){
+  const d=document.createElement("div");
+  d.className=cls;
+  d.textContent=text;
+  term.appendChild(d);
+  term.scrollTop=term.scrollHeight;
+}
+
+function newPrompt(){
+  const line=document.createElement("div");
+  line.innerHTML=`<span class="cmd">user@nexus:~$ </span><span id="input"></span><span class="cursor"></span>`;
+  term.appendChild(line);
+  inputSpan = line.querySelector("#input");
+}
+
+document.addEventListener("keydown", e=>{
+  if(modal.style.display!=="flex") return;
+
+  if(e.key==="Escape"){ modal.style.display="none"; return; }
+
+  if(e.key==="Backspace"){
+    input=input.slice(0,-1);
+  }
+  else if(e.key==="Enter"){
+    execute(input.trim());
+    history.push(input);
+    historyIndex = history.length;
+    input="";
+    return;
+  }
+  else if(e.key==="ArrowUp"){
+    if(historyIndex>0) historyIndex--;
+    input = history[historyIndex] || "";
+  }
+  else if(e.key==="ArrowDown"){
+    if(historyIndex<history.length-1) historyIndex++;
+    input = history[historyIndex] || "";
+  }
+  else if(e.key==="Tab"){
+    e.preventDefault();
+    autocomplete();
+  }
+  else if(e.key.length===1){
+    input+=e.key;
+  }
+
+  inputSpan.textContent=input;
+});
+
+function execute(cmd){
+  print("user@nexus:~$ " + cmd, "cmd");
+
+  const args = cmd.split(" ");
+
+  switch(args[0]){
+
+    case "help":
+      print("Commands: ls, cat, clear, whoami, hostname, exit");
+      break;
+
+    case "ls":
+      print(Object.keys(fs).join(" "));
+      break;
+
+    case "cat":
+      if(fs[args[1]]){
+        fs[args[1]].forEach(v=>print(v,"val"));
+      } else {
+        print("file not found");
+      }
+      break;
+
+    case "clear":
+      term.innerHTML="";
+      break;
+
+    case "whoami":
+      print("operator");
+      break;
+
+    case "hostname":
+      print("nexus-core");
+      break;
+
+    case "exit":
+      modal.style.display="none";
+      return;
+
+    default:
+      print("command not found");
+  }
+
+  newPrompt();
+}
+
+function autocomplete(){
+  const cmds = ["help","ls","cat","clear","whoami","hostname","exit"];
+  const match = cmds.find(c=>c.startsWith(input));
+  if(match) input = match;
+}
+</script>
 
 </body>
 </html>
