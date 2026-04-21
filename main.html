@@ -796,9 +796,9 @@ footer .fr{color:rgba(0,255,231,.3);}
       const span=document.createElement('span');
       span.textContent=nexusNode.textContent.trim();
       nexusNode.replaceWith(span);
-      scramble(span,'NEXUS',900);
+      scramble(span,'MAX',900);
     }
-    scramble(c,'OPERATOR',1200);
+    scramble(c,'MEYER',1200);
   },600);
 })();
 
@@ -838,7 +838,7 @@ const fs={
   certs:{type:'dir',items:{
     'CEH.txt':  ['Certified Ethical Hacker','Issuer: EC-Council','Status: ACTIVE'],
     'DCPT.txt': ['Certified Penetration Tester','Issuer: Desec Security','Status: ACTIVE'],
-    'CRTA.txt': ['Certified Red Team Analyst','Issuer: Altered Security','Status: ACTIVE'],
+    'CRTA.txt': ['Certified Red Team Analyst','Issuer: Cyberwarfare Labs','Status: ACTIVE'],
     'MCRTA.txt':['Multi-Cloud Red Team Analyst','Issuer: Cyberwarfare Labs','Status: ACTIVE'],
   }},
   notes:{type:'dir',items:{
