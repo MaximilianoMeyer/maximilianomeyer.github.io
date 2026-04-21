@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>BOOT</title>
+<title>BOOT SEQUENCE</title>
 
 <style>
   body {
@@ -10,19 +10,35 @@
     background: #0b0500;
     color: #ffb347;
     font-family: 'Courier New', monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     overflow: hidden;
   }
 
-  /* CRT effect */
+  .terminal {
+    padding: 30px;
+    font-size: 15px;
+    line-height: 1.5;
+    text-shadow: 0 0 6px #ff9900;
+  }
+
+  .line { white-space: pre-wrap; }
+
+  .prompt { color: #ffd27a; }
+
+  .cursor::after {
+    content: '█';
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* CRT */
   body::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    content:'';
+    position:fixed;
+    width:100%;
+    height:100%;
     background: repeating-linear-gradient(
       0deg,
       rgba(0,0,0,0.2),
@@ -30,46 +46,126 @@
       transparent 2px,
       transparent 4px
     );
-    pointer-events: none;
+    pointer-events:none;
   }
 
-  .terminal {
-    text-align: center;
-    font-size: 28px;
-    text-shadow: 0 0 15px #ff9900;
-    animation: glow 2s infinite alternate;
+  /* Vignette */
+  body::after {
+    content:'';
+    position:fixed;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle, transparent 60%, black 100%);
+    pointer-events:none;
   }
 
-  @keyframes glow {
-    from { text-shadow: 0 0 5px #ff9900; }
-    to { text-shadow: 0 0 25px #ffcc66; }
+  /* GLITCH */
+  .glitch {
+    animation: glitch 0.2s 5;
+  }
+
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    25% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, 2px); }
+    75% { transform: translate(1px, -1px); }
+    100% { transform: translate(0); }
+  }
+
+  /* FADE OUT */
+  .fade-out {
+    animation: fadeOut 1s forwards;
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; }
   }
 </style>
 </head>
 
 <body>
-  <div class="terminal">
-    <div id="msg"></div>
-  </div>
+
+<div class="terminal" id="term"></div>
 
 <script>
-  const text = "Bem vindo";
-  let i = 0;
+const term = document.getElementById("term");
 
-  function type() {
-    if (i < text.length) {
-      document.getElementById("msg").innerHTML += text.charAt(i);
-      i++;
-      setTimeout(type, 120);
-    }
+function line(text="") {
+  const div = document.createElement("div");
+  div.className = "line";
+  div.textContent = text;
+  term.appendChild(div);
+  return div;
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function type(el, text, speed=40){
+  for(let i=0;i<text.length;i++){
+    el.textContent += text[i];
+    await sleep(speed);
   }
+}
 
-  type();
+async function prompt(cmd){
+  const l = document.createElement("div");
+  l.className = "line";
+  l.innerHTML = `<span class="prompt">swordfish@retro:~$ </span>`;
+  
+  const cmdSpan = document.createElement("span");
+  l.appendChild(cmdSpan);
 
-  // redirect após 3s
-  setTimeout(() => {
-    window.location.href = "main.html";
-  }, 3000);
+  const cursor = document.createElement("span");
+  cursor.className = "cursor";
+  l.appendChild(cursor);
+
+  term.appendChild(l);
+
+  await type(cmdSpan, cmd, 50);
+  cursor.remove();
+  await sleep(200);
+}
+
+async function boot(){
+  line("[ OK ] Initializing memory...");
+  await sleep(300);
+  line("[ OK ] Loading kernel modules...");
+  await sleep(300);
+  line("[ OK ] Mounting filesystems...");
+  await sleep(300);
+  line("[ OK ] Network interface up...");
+  await sleep(300);
+  line("");
+
+  await prompt("whoami");
+  line("researcher");
+  await sleep(300);
+
+  await prompt("uname -a");
+  line("Linux retro-terminal 5.15.0 x86_64");
+  await sleep(300);
+
+  await prompt("cat banner.txt");
+  line("ACCESSING SYSTEM...");
+  await sleep(300);
+
+  await prompt('echo "BEM VINDO"');
+  line("BEM VINDO");
+
+  // glitch effect
+  term.classList.add("glitch");
+  await sleep(500);
+
+  await sleep(2500);
+
+  // fade + redirect
+  document.body.classList.add("fade-out");
+  await sleep(1000);
+
+  window.location.href = "main.html";
+}
+
+boot();
 </script>
 
 </body>
