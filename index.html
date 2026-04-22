@@ -6,229 +6,319 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:#0b0500;color:#ffb347;
+
+body {
+  background:#0b0500;
+  color:#ffb347;
   font-family:monospace;
-  overflow:hidden;height:100vh;width:100vw;
+  overflow:hidden;
+  height:100vh;
+  width:100vw;
 }
-.terminal{
-  padding:20px;font-size:14px;line-height:1.6;
+
+.terminal {
+  padding:20px;
+  font-size:14px;
+  line-height:1.6;
   text-shadow:0 0 6px #ff9900;
-  height:100vh;overflow-y:auto;
+  height:calc(100vh - 60px);
+  overflow-y:auto;
 }
-@media(max-width:600px){.terminal{font-size:12px;padding:14px;}}
-.line{white-space:pre-wrap;word-break:break-all;}
-.prompt{color:#ffd27a;}
 
-/* ── GHOST INPUT ── completely invisible, just captures keyboard */
-#ghost{
+/* mobile: smaller font */
+@media(max-width:600px){
+  .terminal{font-size:12px;padding:14px;}
+}
+
+.line { white-space:pre-wrap; word-break:break-all; }
+.prompt { color:#ffd27a; }
+
+/* hidden input trick for mobile keyboard */
+#mobileInput {
   position:fixed;
-  left:-9999px;top:50%;
-  width:1px;height:1px;
+  top:-200px; left:0;
+  width:100%; height:1px;
   opacity:0;
-  font-size:16px;        /* no iOS zoom */
-  border:none;outline:none;
-  background:transparent;
-  color:transparent;
-  caret-color:transparent;
-  resize:none;
+  pointer-events:none;
+  font-size:16px; /* prevent iOS zoom */
 }
 
-/* blinking block cursor rendered inside terminal */
-.cur{
-  display:inline-block;width:9px;height:1em;
-  background:#ffb347;vertical-align:text-bottom;
-  animation:cb 1s steps(1) infinite;margin-left:1px;
+/* blinking cursor */
+.cursor-inline {
+  display:inline-block;
+  width:8px; height:1em;
+  background:#ffb347;
+  vertical-align:text-bottom;
+  animation:blink 1s steps(1) infinite;
 }
-@keyframes cb{50%{opacity:0;}}
+@keyframes blink{50%{opacity:0;}}
 
-#tapHint{
-  position:fixed;bottom:18px;left:0;right:0;
-  text-align:center;font-size:11px;letter-spacing:3px;
-  color:#ff990055;pointer-events:none;transition:opacity .5s;
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.2),rgba(0,0,0,0.2) 2px,
+    transparent 2px,transparent 4px
+  );
+  pointer-events:none;
+  z-index:100;
 }
-
-body::before{content:'';position:fixed;inset:0;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.2),rgba(0,0,0,0.2) 2px,transparent 2px,transparent 4px);
-  pointer-events:none;z-index:100;}
-body::after{content:'';position:fixed;inset:0;
+body::after {
+  content:'';
+  position:fixed; inset:0;
   background:radial-gradient(circle,transparent 60%,black 100%);
-  pointer-events:none;z-index:100;}
+  pointer-events:none;
+  z-index:100;
+}
 
-.glitch{animation:glitch .15s 6;}
+.glitch { animation:glitch .15s 6; }
 @keyframes glitch{
-  0%{transform:translate(0)}25%{transform:translate(2px,-2px)}
-  50%{transform:translate(-2px,2px)}75%{transform:translate(1px,-1px)}100%{transform:translate(0)}
+  0%{transform:translate(0)}
+  25%{transform:translate(2px,-2px)}
+  50%{transform:translate(-2px,2px)}
+  75%{transform:translate(1px,-1px)}
+  100%{transform:translate(0)}
 }
 .fade-out{animation:fadeOut 1s forwards;}
 @keyframes fadeOut{to{opacity:0;}}
+
+/* ── MOBILE INPUT BAR ── */
+#inputBar {
+  display:none; /* shown only during inputPrompt phase */
+  position:fixed;
+  bottom:0; left:0; right:0;
+  background:#1a0e00;
+  border-top:1px solid #ff990044;
+  padding:10px 14px;
+  z-index:200;
+  gap:8px;
+  align-items:center;
+}
+#inputBar.visible { display:flex; }
+
+#inputBar input {
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#ffb347;
+  font-family:monospace;
+  font-size:15px;
+  text-shadow:0 0 6px #ff9900;
+  caret-color:#ffb347;
+}
+#inputBar input::placeholder { color:#7a5020; }
+
+#inputBar button {
+  background:#ff990022;
+  border:1px solid #ff990066;
+  color:#ffb347;
+  font-family:monospace;
+  font-size:13px;
+  padding:6px 14px;
+  border-radius:2px;
+  transition:background .2s;
+}
+#inputBar button:active { background:#ff990044; }
 </style>
 </head>
 <body>
 
 <div class="terminal" id="term"></div>
-<input id="ghost" type="text"
-  autocomplete="off" autocorrect="off" autocapitalize="none"
-  spellcheck="false" inputmode="text">
-<div id="tapHint">[ TOQUE NA TELA PARA DIGITAR ]</div>
+<input id="mobileInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+<!-- Mobile input bar (shown during login prompts) -->
+<div id="inputBar">
+  <input id="barInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="digite aqui...">
+  <button id="barSend">ENTER</button>
+</div>
 
 <script>
-const term  = document.getElementById('term');
-const ghost = document.getElementById('ghost');
-const hint  = document.getElementById('tapHint');
+const term      = document.getElementById('term');
+const mobileIn  = document.getElementById('mobileInput');
+const inputBar  = document.getElementById('inputBar');
+const barInput  = document.getElementById('barInput');
+const barSend   = document.getElementById('barSend');
 
-/* keep ghost focused — tap anywhere refocuses */
-function focusGhost(){ghost.focus();ghost.value='';}
-
-document.addEventListener('touchend', e=>{
-  if(e.target!==ghost) focusGhost();
-},{passive:true});
-document.addEventListener('click', e=>{
-  if(e.target!==ghost) focusGhost();
-});
-
-let hintGone=false;
-function hideHint(){
-  if(hintGone)return;hintGone=true;
-  hint.style.opacity='0';
-  setTimeout(()=>hint.style.display='none',600);
+/* ── AUDIO ── */
+let audioCtx;
+function getAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
 }
-
-/* audio */
-let actx;
-function getCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx;}
-function beep(){
+function keySound(){
   try{
-    const c=getCtx(),o=c.createOscillator(),g=c.createGain();
-    o.type='square';o.frequency.value=200+Math.random()*200;
-    g.gain.value=0.015;o.connect(g);g.connect(c.destination);
-    o.start();o.stop(c.currentTime+0.03);
+    const ctx=getAudio();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type='square';
+    o.frequency.value=200+Math.random()*200;
+    g.gain.value=0.015;
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime+0.03);
   }catch(e){}
 }
 
-/* helpers */
-function addLine(t){
-  t=(t===undefined)?'':t;
-  const d=document.createElement('div');d.className='line';d.textContent=t;
-  term.appendChild(d);term.scrollTop=term.scrollHeight;return d;
+/* ── HELPERS ── */
+function line(t){
+  t = t === undefined ? '' : t;
+  const d=document.createElement('div');
+  d.className='line'; d.textContent=t;
+  term.appendChild(d);
+  term.scrollTop=term.scrollHeight;
+  return d;
 }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-async function typeOut(el,text,spd){
-  spd=spd||40;
-  for(const c of text){el.textContent+=c;beep();await sleep(spd);}
+
+async function type(el, text, speed){
+  speed = speed||40;
+  for(const c of text){
+    el.textContent+=c;
+    keySound();
+    await sleep(speed);
+  }
 }
-async function typedCommand(cmd){
-  const l=document.createElement('div');l.className='line';
+
+async function typedPrompt(cmd){
+  const l=document.createElement('div');
+  l.className='line';
   l.innerHTML='<span class="prompt">root@matrix:~# </span>';
-  const s=document.createElement('span');
-  const c=document.createElement('span');c.className='cur';
-  l.appendChild(s);l.appendChild(c);term.appendChild(l);
-  await typeOut(s,cmd,40);c.remove();await sleep(200);
+  const span=document.createElement('span');
+  const cur=document.createElement('span');
+  cur.className='cursor-inline';
+  l.appendChild(span); l.appendChild(cur);
+  term.appendChild(l);
+  await type(span, cmd, 40);
+  cur.remove();
+  await sleep(200);
 }
 
-/* ── inputPrompt: ghost captures all typing, display in terminal ── */
-function inputPrompt(label,hidden){
-  hidden=hidden||false;
-  addLine(label);
+/* ── INPUT PROMPT (mobile-friendly) ── */
+function inputPrompt(label, hidden){
+  hidden = hidden||false;
 
-  const row=document.createElement('div');row.className='line';
-  const txt=document.createElement('span');
-  const cur=document.createElement('span');cur.className='cur';
-  row.appendChild(txt);row.appendChild(cur);
-  term.appendChild(row);term.scrollTop=term.scrollHeight;
+  // show the label
+  line(label);
 
-  ghost.value='';
-  focusGhost();
+  // show live preview line
+  const preview = line('');
+
+  // show mobile bar
+  barInput.type   = hidden ? 'password' : 'text';
+  barInput.value  = '';
+  barInput.placeholder = hidden ? '••••••••' : 'digite aqui...';
+  inputBar.classList.add('visible');
+  barInput.focus();
 
   return new Promise(resolve=>{
-    let val='';
+    let value='';
 
-    function render(){
-      txt.textContent=hidden?'*'.repeat(val.length):val;
-      term.scrollTop=term.scrollHeight;
+    // update preview as user types
+    function updatePreview(){
+      value = barInput.value;
+      preview.textContent = hidden ? '*'.repeat(value.length) : value;
+      term.scrollTop = term.scrollHeight;
     }
 
-    /* mobile: ghost.value changes via soft keyboard → input event */
-    function onInput(){
-      hideHint();
-      val=ghost.value;
-      beep();render();
+    barInput.addEventListener('input', updatePreview);
+
+    function confirm(){
+      value = barInput.value;
+      barInput.removeEventListener('input', updatePreview);
+      inputBar.classList.remove('visible');
+      barInput.value = '';
+      // show final value on screen
+      preview.textContent = hidden ? '*'.repeat(value.length) : value;
+      keySound();
+      resolve(value);
     }
 
-    /* desktop + mobile hardware keyboard */
-    function onKey(e){
-      hideHint();
-      if(e.key==='Enter'){
-        e.preventDefault();
-        done(val);return;
-      }
-      if(e.key==='Backspace'){
-        e.preventDefault();
-        val=val.slice(0,-1);
-        ghost.value=val;
-        beep();render();return;
-      }
-    }
+    barSend.onclick = confirm;
 
-    function done(v){
-      ghost.removeEventListener('input',onInput);
-      ghost.removeEventListener('keydown',onKey);
-      cur.remove();
-      ghost.value='';
-      resolve(v);
-    }
-
-    ghost.addEventListener('input',onInput);
-    ghost.addEventListener('keydown',onKey);
+    barInput.onkeydown = function(e){
+      if(e.key==='Enter'){ e.preventDefault(); confirm(); }
+    };
   });
 }
 
-/* waitEnter: tap anywhere or press Enter */
+/* ── WAIT ENTER (mobile: show a tap button) ── */
 function waitEnter(){
-  const note=addLine('[ pressione ENTER ou toque para continuar ]');
-  note.style.cssText='color:#ff990055;font-size:11px;letter-spacing:2px;';
-  ghost.value='';focusGhost();
-
   return new Promise(resolve=>{
+    // show bar with just the send button
+    barInput.style.display='none';
+    barInput.placeholder='';
+    inputBar.classList.add('visible');
+    barSend.textContent='CONTINUAR →';
+
     function done(){
-      ghost.removeEventListener('keydown',onKey);
-      document.removeEventListener('touchend',onTouch);
-      note.remove();resolve();
+      inputBar.classList.remove('visible');
+      barInput.style.display='';
+      barSend.textContent='ENTER';
+      barSend.onclick=null;
+      // also remove keyboard listener
+      document.removeEventListener('keydown', kbHandler);
+      resolve();
     }
-    function onKey(e){if(e.key==='Enter'){e.preventDefault();done();}}
-    function onTouch(){done();}
-    ghost.addEventListener('keydown',onKey);
-    setTimeout(()=>document.addEventListener('touchend',onTouch,{once:true,passive:true}),400);
+
+    barSend.onclick = done;
+
+    // also allow physical keyboard
+    function kbHandler(e){
+      if(e.key==='Enter') done();
+    }
+    document.addEventListener('keydown', kbHandler);
   });
 }
 
-/* ── FLOW ── */
+/* ── MAIN FLOW ── */
 async function run(){
-  document.addEventListener('touchstart',()=>{try{getCtx();}catch(e){}},{once:true});
-  focusGhost();
+  line('[ OK ] Initializing memory...');
+  await sleep(200);
+  line('[ OK ] Loading kernel...');
+  await sleep(200);
+  line('[ OK ] Starting services...');
+  await sleep(200);
+  line('');
 
-  addLine('[ OK ] Initializing memory...');await sleep(200);
-  addLine('[ OK ] Loading kernel...');await sleep(200);
-  addLine('[ OK ] Starting services...');await sleep(300);
-  addLine('');
+  const user = await inputPrompt('login:');
+  const pass = await inputPrompt('password:', true);
 
-  const user=await inputPrompt('login:');
-  const pass=await inputPrompt('password:',true);
-
-  addLine('');addLine('Authenticating...');await sleep(600);
-  addLine('Access granted.');await sleep(400);
-  addLine('');addLine('Press ENTER to continue...');
+  line('');
+  line('Authenticating...');
+  await sleep(500);
+  line('Access granted.');
+  await sleep(300);
+  line('');
+  line('Press ENTER to continue...');
   await waitEnter();
 
-  await typedCommand('whoami');addLine(user||'guest');
-  await typedCommand('hostname');addLine('nexus-core');
-  await typedCommand('cat banner.txt');addLine('>> ACCESSING SECURE NODE');
-  await typedCommand('echo "BEM VINDO"');addLine('BEM VINDO');
+  await typedPrompt('whoami');
+  line(user||'guest');
 
-  term.classList.add('glitch');await sleep(600);await sleep(1800);
-  document.body.classList.add('fade-out');await sleep(1000);
+  await typedPrompt('hostname');
+  line('nexus-core');
+
+  await typedPrompt('cat banner.txt');
+  line('>> ACCESSING SECURE NODE');
+
+  await typedPrompt('echo "BEM VINDO"');
+  line('BEM VINDO');
+
+  term.classList.add('glitch');
+  await sleep(600);
+
+  await sleep(1800);
+
+  document.body.classList.add('fade-out');
+  await sleep(1000);
+
   window.location.href='main.html';
 }
+
+// unlock audio on first touch (iOS requirement)
+document.addEventListener('touchstart', ()=>{ try{ getAudio(); }catch(e){} }, {once:true});
+
 run();
 </script>
 </body>
