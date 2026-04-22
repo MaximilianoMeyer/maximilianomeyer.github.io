@@ -3,236 +3,323 @@
 <head>
 <meta charset="UTF-8">
 <title>ACCESS TERMINAL</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body {
-  margin:0;
   background:#0b0500;
   color:#ffb347;
   font-family:monospace;
   overflow:hidden;
+  height:100vh;
+  width:100vw;
 }
 
 .terminal {
-  padding:25px;
-  font-size:15px;
-  line-height:1.5;
+  padding:20px;
+  font-size:14px;
+  line-height:1.6;
   text-shadow:0 0 6px #ff9900;
+  height:calc(100vh - 60px);
+  overflow-y:auto;
 }
 
-.line { white-space:pre-wrap; }
+/* mobile: smaller font */
+@media(max-width:600px){
+  .terminal{font-size:12px;padding:14px;}
+}
 
+.line { white-space:pre-wrap; word-break:break-all; }
 .prompt { color:#ffd27a; }
 
-.cursor::after {
-  content:"█";
-  animation:blink 1s infinite;
+/* hidden input trick for mobile keyboard */
+#mobileInput {
+  position:fixed;
+  top:-200px; left:0;
+  width:100%; height:1px;
+  opacity:0;
+  pointer-events:none;
+  font-size:16px; /* prevent iOS zoom */
 }
 
-@keyframes blink { 50%{opacity:0;} }
+/* blinking cursor */
+.cursor-inline {
+  display:inline-block;
+  width:8px; height:1em;
+  background:#ffb347;
+  vertical-align:text-bottom;
+  animation:blink 1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0;}}
 
 body::before {
   content:'';
-  position:fixed;
-  width:100%;
-  height:100%;
-  background: repeating-linear-gradient(
+  position:fixed; inset:0;
+  background:repeating-linear-gradient(
     0deg,
-    rgba(0,0,0,0.2),
-    rgba(0,0,0,0.2) 2px,
-    transparent 2px,
-    transparent 4px
+    rgba(0,0,0,0.2),rgba(0,0,0,0.2) 2px,
+    transparent 2px,transparent 4px
   );
+  pointer-events:none;
+  z-index:100;
 }
-
 body::after {
   content:'';
-  position:fixed;
-  width:100%;
-  height:100%;
-  background: radial-gradient(circle, transparent 60%, black 100%);
+  position:fixed; inset:0;
+  background:radial-gradient(circle,transparent 60%,black 100%);
+  pointer-events:none;
+  z-index:100;
 }
 
-.glitch {
-  animation: glitch 0.15s 6;
-}
-
-@keyframes glitch {
+.glitch { animation:glitch .15s 6; }
+@keyframes glitch{
   0%{transform:translate(0)}
   25%{transform:translate(2px,-2px)}
   50%{transform:translate(-2px,2px)}
   75%{transform:translate(1px,-1px)}
   100%{transform:translate(0)}
 }
+.fade-out{animation:fadeOut 1s forwards;}
+@keyframes fadeOut{to{opacity:0;}}
 
-.fade-out {
-  animation: fadeOut 1s forwards;
+/* ── MOBILE INPUT BAR ── */
+#inputBar {
+  display:none; /* shown only during inputPrompt phase */
+  position:fixed;
+  bottom:0; left:0; right:0;
+  background:#1a0e00;
+  border-top:1px solid #ff990044;
+  padding:10px 14px;
+  z-index:200;
+  gap:8px;
+  align-items:center;
 }
+#inputBar.visible { display:flex; }
 
-@keyframes fadeOut {
-  to { opacity:0 }
+#inputBar input {
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#ffb347;
+  font-family:monospace;
+  font-size:15px;
+  text-shadow:0 0 6px #ff9900;
+  caret-color:#ffb347;
 }
+#inputBar input::placeholder { color:#7a5020; }
+
+#inputBar button {
+  background:#ff990022;
+  border:1px solid #ff990066;
+  color:#ffb347;
+  font-family:monospace;
+  font-size:13px;
+  padding:6px 14px;
+  border-radius:2px;
+  transition:background .2s;
+}
+#inputBar button:active { background:#ff990044; }
 </style>
 </head>
-
 <body>
 
 <div class="terminal" id="term"></div>
+<input id="mobileInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+<!-- Mobile input bar (shown during login prompts) -->
+<div id="inputBar">
+  <input id="barInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="digite aqui...">
+  <button id="barSend">ENTER</button>
+</div>
 
 <script>
-const term = document.getElementById("term");
+const term      = document.getElementById('term');
+const mobileIn  = document.getElementById('mobileInput');
+const inputBar  = document.getElementById('inputBar');
+const barInput  = document.getElementById('barInput');
+const barSend   = document.getElementById('barSend');
 
-// 🔊 Som simples de tecla
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
+/* ── AUDIO ── */
+let audioCtx;
+function getAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
 function keySound(){
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type="square";
-  o.frequency.value = 200 + Math.random()*200;
-  g.gain.value = 0.02;
-  o.connect(g);
-  g.connect(ctx.destination);
-  o.start();
-  o.stop(ctx.currentTime + 0.03);
+  try{
+    const ctx=getAudio();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type='square';
+    o.frequency.value=200+Math.random()*200;
+    g.gain.value=0.015;
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime+0.03);
+  }catch(e){}
 }
 
-// helpers
-function line(t=""){
-  const d=document.createElement("div");
-  d.className="line";
-  d.textContent=t;
+/* ── HELPERS ── */
+function line(t){
+  t = t === undefined ? '' : t;
+  const d=document.createElement('div');
+  d.className='line'; d.textContent=t;
   term.appendChild(d);
-  term.scrollTop = term.scrollHeight;
+  term.scrollTop=term.scrollHeight;
   return d;
 }
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-async function type(el, text, speed=40){
-  for(let c of text){
-    el.textContent += c;
+async function type(el, text, speed){
+  speed = speed||40;
+  for(const c of text){
+    el.textContent+=c;
     keySound();
     await sleep(speed);
   }
 }
 
-// prompt com typing
-async function prompt(cmd){
-  const l=document.createElement("div");
-  l.className="line";
-  l.innerHTML=`<span class="prompt">root@matrix:~# </span>`;
-  
-  const span=document.createElement("span");
-  l.appendChild(span);
-
-  const cursor=document.createElement("span");
-  cursor.className="cursor";
-  l.appendChild(cursor);
-
+async function typedPrompt(cmd){
+  const l=document.createElement('div');
+  l.className='line';
+  l.innerHTML='<span class="prompt">root@matrix:~# </span>';
+  const span=document.createElement('span');
+  const cur=document.createElement('span');
+  cur.className='cursor-inline';
+  l.appendChild(span); l.appendChild(cur);
   term.appendChild(l);
-
   await type(span, cmd, 40);
-  cursor.remove();
+  cur.remove();
   await sleep(200);
 }
 
-// espera ENTER real
+/* ── INPUT PROMPT (mobile-friendly) ── */
+function inputPrompt(label, hidden){
+  hidden = hidden||false;
+
+  // show the label
+  line(label);
+
+  // show live preview line
+  const preview = line('');
+
+  // show mobile bar
+  barInput.type   = hidden ? 'password' : 'text';
+  barInput.value  = '';
+  barInput.placeholder = hidden ? '••••••••' : 'digite aqui...';
+  inputBar.classList.add('visible');
+  barInput.focus();
+
+  return new Promise(resolve=>{
+    let value='';
+
+    // update preview as user types
+    function updatePreview(){
+      value = barInput.value;
+      preview.textContent = hidden ? '*'.repeat(value.length) : value;
+      term.scrollTop = term.scrollHeight;
+    }
+
+    barInput.addEventListener('input', updatePreview);
+
+    function confirm(){
+      value = barInput.value;
+      barInput.removeEventListener('input', updatePreview);
+      inputBar.classList.remove('visible');
+      barInput.value = '';
+      // show final value on screen
+      preview.textContent = hidden ? '*'.repeat(value.length) : value;
+      keySound();
+      resolve(value);
+    }
+
+    barSend.onclick = confirm;
+
+    barInput.onkeydown = function(e){
+      if(e.key==='Enter'){ e.preventDefault(); confirm(); }
+    };
+  });
+}
+
+/* ── WAIT ENTER (mobile: show a tap button) ── */
 function waitEnter(){
   return new Promise(resolve=>{
-    function handler(e){
-      if(e.key==="Enter"){
-        document.removeEventListener("keydown", handler);
-        resolve();
-      }
+    // show bar with just the send button
+    barInput.style.display='none';
+    barInput.placeholder='';
+    inputBar.classList.add('visible');
+    barSend.textContent='CONTINUAR →';
+
+    function done(){
+      inputBar.classList.remove('visible');
+      barInput.style.display='';
+      barSend.textContent='ENTER';
+      barSend.onclick=null;
+      // also remove keyboard listener
+      document.removeEventListener('keydown', kbHandler);
+      resolve();
     }
-    document.addEventListener("keydown", handler);
+
+    barSend.onclick = done;
+
+    // also allow physical keyboard
+    function kbHandler(e){
+      if(e.key==='Enter') done();
+    }
+    document.addEventListener('keydown', kbHandler);
   });
 }
 
-// INPUT fake (login)
-async function inputPrompt(label, hidden=false){
-  const l=document.createElement("div");
-  l.className="line";
-  l.textContent = label;
-  term.appendChild(l);
-
-  let value="";
-  const inputLine=document.createElement("div");
-  inputLine.className="line";
-  term.appendChild(inputLine);
-
-  return new Promise(resolve=>{
-    function handler(e){
-      if(e.key==="Enter"){
-        document.removeEventListener("keydown", handler);
-        resolve(value);
-      } else if(e.key==="Backspace"){
-        value=value.slice(0,-1);
-      } else if(e.key.length===1){
-        value+=e.key;
-      }
-
-      inputLine.textContent = hidden ? "*".repeat(value.length) : value;
-    }
-    document.addEventListener("keydown", handler);
-  });
-}
-
-// FLOW
+/* ── MAIN FLOW ── */
 async function run(){
-
-  // BOOT
-  line("[ OK ] Initializing memory...");
+  line('[ OK ] Initializing memory...');
   await sleep(200);
-  line("[ OK ] Loading kernel...");
+  line('[ OK ] Loading kernel...');
   await sleep(200);
-  line("[ OK ] Starting services...");
+  line('[ OK ] Starting services...');
   await sleep(200);
-  line("");
+  line('');
 
-  // LOGIN
-  const user = await inputPrompt("login:");
-  const pass = await inputPrompt("password:", true);
+  const user = await inputPrompt('login:');
+  const pass = await inputPrompt('password:', true);
 
-  line("");
-  line("Authenticating...");
+  line('');
+  line('Authenticating...');
   await sleep(500);
-
-  line("Access granted.");
+  line('Access granted.');
   await sleep(300);
-
-  line("");
-  line("Press ENTER to continue...");
+  line('');
+  line('Press ENTER to continue...');
   await waitEnter();
 
-  // COMMANDS
-  await prompt("whoami");
-  line(user || "guest");
+  await typedPrompt('whoami');
+  line(user||'guest');
 
-  await prompt("hostname");
-  line("nexus-core");
+  await typedPrompt('hostname');
+  line('nexus-core');
 
-  await prompt("cat banner.txt");
-  line(">> ACCESSING SECURE NODE");
+  await typedPrompt('cat banner.txt');
+  line('>> ACCESSING SECURE NODE');
 
-  await prompt('echo "BEM VINDO"');
-  line("BEM VINDO");
+  await typedPrompt('echo "BEM VINDO"');
+  line('BEM VINDO');
 
-  // glitch
-  term.classList.add("glitch");
-  await sleep(500);
+  term.classList.add('glitch');
+  await sleep(600);
 
-  await sleep(2000);
+  await sleep(1800);
 
-  // fade
-  document.body.classList.add("fade-out");
+  document.body.classList.add('fade-out');
   await sleep(1000);
 
-  window.location.href="main.html";
+  window.location.href='main.html';
 }
+
+// unlock audio on first touch (iOS requirement)
+document.addEventListener('touchstart', ()=>{ try{ getAudio(); }catch(e){} }, {once:true});
 
 run();
 </script>
-
 </body>
 </html>
