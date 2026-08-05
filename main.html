@@ -355,6 +355,7 @@ footer .fr{color:rgba(0,255,231,.3);}
   .lang-card:nth-last-child(-n+2){border-bottom:none;}
 }
 </style>
+<link rel="stylesheet" href="doom.css">
 </head>
 <body>
 
@@ -372,6 +373,7 @@ footer .fr{color:rgba(0,255,231,.3);}
   <div class="nav-links">
     <a href="#">Research</a>
     <a href="#">Writeups</a>
+    <a href="#" onclick="openDoom();return false;">DOOM CV</a>
     <a href="#">About</a>
     <a href="#" class="special" onclick="openTerminal();return false;">■ CERTS</a>
     <a href="#">Contato</a>
@@ -487,6 +489,29 @@ footer .fr{color:rgba(0,255,231,.3);}
       <button id="termSendBtn">SEND</button>
     </div>
 
+  </div>
+</div>
+
+<!-- DOOM-LIKE INTERACTIVE CV -->
+<div id="doomModal" aria-hidden="true">
+  <div class="doom-shell">
+    <header class="doom-topbar">
+      <div class="doom-title">MAX MEYER // CAREER INFERNO <small>— PROTÓTIPO</small></div>
+      <button class="doom-close" id="doomClose">[ ESC ] SAIR</button>
+    </header>
+    <main class="doom-stage">
+      <canvas class="doom-canvas" id="doomCanvas" tabindex="0"></canvas>
+      <div class="doom-crosshair"></div>
+      <div class="doom-hint" id="doomHint">WASD: mover · setas/Q/E: olhar · F: interagir · ESC: sair</div>
+      <article class="doom-card" id="doomCard"></article>
+    </main>
+    <footer class="doom-bottom">
+      <div class="doom-hud"><span>HEALTH <strong>100</strong></span><span>MISSION <strong>CAREER RECON</strong></span><span class="doom-progress" id="doomProgress">0/6 TERMINAIS</span></div>
+      <div class="doom-mobile">
+        <div class="doom-pad"><button class="doom-action up" data-doom-key="w">▲</button><button class="doom-action left" data-doom-key="a">◀</button><button class="doom-action down" data-doom-key="s">▼</button><button class="doom-action right" data-doom-key="d">▶</button></div>
+        <button class="doom-action" data-doom-key="ArrowLeft">↶</button><button class="doom-action" data-doom-key="ArrowRight">↷</button><button class="doom-action" id="doomInteract">USE</button>
+      </div>
+    </footer>
   </div>
 </div>
 
@@ -762,5 +787,6 @@ function closeTerminal(){
   termInput.value='';
 }
 </script>
+<script src="doom.js"></script>
 </body>
 </html>
