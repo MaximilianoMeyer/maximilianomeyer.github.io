@@ -1,0 +1,162 @@
+/* MAX MEYER // CRT-80 ARCADE OVERRIDE */
+:root{
+  --cyan:#79ff9b;
+  --magenta:#ffc857;
+  --green:#79ff9b;
+  --bg:#050906;
+  --panel:rgba(121,255,155,.035);
+  --border:rgba(121,255,155,.22);
+  --text:#c7d8c9;
+  --dim:#627568;
+  --amber:#ffc857;
+  --danger:#ff6b57;
+}
+html{image-rendering:pixelated;}
+body{
+  background:
+    linear-gradient(rgba(3,11,6,.78),rgba(3,11,6,.92)),
+    repeating-linear-gradient(90deg,rgba(121,255,155,.015) 0 1px,transparent 1px 48px),
+    repeating-linear-gradient(0deg,rgba(121,255,155,.015) 0 1px,transparent 1px 48px),
+    #050906;
+}
+body::after{opacity:.8;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.17) 2px 4px);}
+.vignette{background:radial-gradient(ellipse at center,transparent 42%,rgba(0,3,1,.8) 100%);}
+#streamCanvas,#noiseCanvas,#curTrail,.blob{display:none!important;}
+@media(hover:hover){*{cursor:auto!important;}a,button{cursor:pointer!important;}}
+#cur,#curDot{display:none!important;}
+.nav{background:rgba(3,9,5,.94);border-bottom:2px solid var(--border);backdrop-filter:none;box-shadow:0 4px 0 rgba(0,0,0,.45);}
+.nav-logo{color:var(--cyan);text-shadow:0 0 12px rgba(121,255,155,.55);padding-bottom:13px;}
+.nav-logo::after{content:'THREAT OPERATIONS';color:var(--amber);font-size:7px;letter-spacing:2px;bottom:0;opacity:.85;}
+.nav-links a{color:#718276;}
+.nav-links a:hover{color:var(--cyan);text-shadow:0 0 9px rgba(121,255,155,.8);}
+.nav-links a.special{color:var(--amber);border:2px solid rgba(255,200,87,.55);box-shadow:3px 3px 0 rgba(0,0,0,.6);}
+.nav-links a.special:hover{border-color:var(--amber);box-shadow:0 0 16px rgba(255,200,87,.25),3px 3px 0 rgba(0,0,0,.6);text-shadow:none;}
+.hero{min-height:92vh;}
+.hero::before{content:'FIELD CONSOLE / NODE 01';position:absolute;top:110px;left:52px;font-size:9px;letter-spacing:3px;color:rgba(121,255,155,.38);}
+.hero-corner::before,.hero-corner::after{border-color:rgba(121,255,155,.45);}
+.hero-eyecatch{color:var(--amber);}
+.hero-eyecatch .tag{color:var(--cyan);border-color:rgba(121,255,155,.45);background:rgba(121,255,155,.05);}
+.hero h1{font-family:'Orbitron',sans-serif;letter-spacing:2px;text-shadow:5px 5px 0 #132117;}
+.hero h1 .line-cyan{color:var(--cyan);text-shadow:0 0 22px rgba(121,255,155,.46),5px 5px 0 #132117;}
+.hero-sub{color:#84968a;max-width:660px;}
+.hero-sub .hi{color:var(--amber);}
+.status-bar{border:1px solid var(--border);display:inline-flex;width:max-content;padding:8px 12px;background:rgba(0,0,0,.28);}
+.social a{border:2px solid var(--border);box-shadow:3px 3px 0 rgba(0,0,0,.5);}
+.social a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 12px rgba(121,255,155,.15),3px 3px 0 rgba(0,0,0,.5);text-shadow:none;}
+.social .arcade-cta{color:#081108;background:var(--amber);border-color:var(--amber);font-weight:700;}
+.social .arcade-cta:hover{color:#081108;border-color:#ffe09a;background:#ffe09a;}
+.divider{height:2px;background:repeating-linear-gradient(90deg,var(--cyan) 0 12px,transparent 12px 20px);opacity:.55;}
+.divider::before{display:none;}
+.section-num{color:var(--amber);border:2px solid rgba(255,200,87,.45);}
+.section-label h2{letter-spacing:4px;}
+.section-label h2 em{color:var(--cyan);text-shadow:0 0 10px rgba(121,255,155,.35);}
+.section-label::after{height:2px;background:repeating-linear-gradient(90deg,var(--border) 0 9px,transparent 9px 15px);}
+.arsenal-grid,.lang-grid{border:2px solid var(--border);box-shadow:7px 7px 0 rgba(0,0,0,.48);}
+.tool-card,.lang-card{background:rgba(5,15,8,.7);}
+.tool-card::after{background:var(--amber);box-shadow:none;height:3px;}
+.tool-icon-wrap{border:2px solid rgba(121,255,155,.18);filter:grayscale(1);}
+.tool-name,.lang-name{color:#d5e5d8;}
+.tool-card:hover .tool-name{color:var(--amber);text-shadow:none;}
+footer{border-top:2px solid var(--border);background:rgba(3,9,5,.8);}
+
+/* CERTIFICATION ROAD */
+#certRoadModal{position:fixed;inset:0;z-index:12000;display:none;align-items:center;justify-content:center;background:rgba(0,4,1,.96);padding:18px;}
+#certRoadModal.open{display:flex;}
+.cert-road-shell{width:min(1120px,100%);border:3px solid var(--cyan);background:#030704;box-shadow:0 0 0 5px #101a12,0 0 55px rgba(121,255,155,.2);}
+.cert-road-top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:3px solid var(--cyan);background:#071109;color:var(--cyan);font-size:12px;letter-spacing:2px;}
+.cert-road-top small{color:var(--amber);margin-left:10px;}
+.cert-road-top button{font:inherit;font-size:10px;color:var(--danger);background:#130805;border:2px solid var(--danger);padding:7px 10px;box-shadow:3px 3px 0 #000;}
+.cert-road-stage{position:relative;aspect-ratio:16/9;min-height:320px;overflow:hidden;background:#020402;}
+#certRoadCanvas{display:block;width:100%;height:100%;image-rendering:pixelated;outline:none;}
+.cert-road-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.22) 3px 5px),radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.55) 100%);mix-blend-mode:multiply;}
+.cert-road-hud{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;color:var(--cyan);font-size:11px;letter-spacing:2px;text-shadow:2px 2px #000;pointer-events:none;}
+.cert-road-hud b{color:var(--amber);}
+.cert-road-help{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);white-space:nowrap;color:rgba(207,233,211,.68);font-size:9px;letter-spacing:2px;text-shadow:2px 2px #000;}
+.cert-road-card{display:none;position:absolute;right:5%;top:17%;width:min(360px,42%);padding:18px;border:3px solid var(--amber);background:rgba(4,10,5,.94);box-shadow:6px 6px 0 #000,0 0 24px rgba(255,200,87,.15);color:#dce9dd;}
+.cert-road-card.show{display:block;animation:roadCardIn .18s steps(3,end);}
+@keyframes roadCardIn{from{transform:translateX(18px);opacity:0}to{transform:none;opacity:1}}
+.cert-road-card .code{color:var(--amber);font:700 24px 'Orbitron',sans-serif;letter-spacing:3px;}
+.cert-road-card h3{font:700 15px 'Rajdhani',sans-serif;text-transform:uppercase;letter-spacing:2px;color:var(--cyan);margin:8px 0 5px;}
+.cert-road-card p{font-size:10px;line-height:1.7;color:#93a899;}
+.cert-road-card .issuer{margin-top:9px;padding-top:9px;border-top:1px dashed rgba(121,255,155,.35);color:#dce9dd;}
+.cert-road-touch{display:none;position:absolute;left:12px;right:12px;bottom:36px;justify-content:space-between;pointer-events:none;}
+.cert-road-touch button{pointer-events:auto;min-width:72px;padding:11px 14px;background:rgba(3,10,5,.78);border:2px solid var(--cyan);color:var(--cyan);font:700 11px 'Share Tech Mono',monospace;}
+@media(max-width:760px){
+  .nav{padding:12px 14px}.nav-links{gap:10px}.nav-links a:not(.special){display:none}.nav-logo{letter-spacing:3px}
+  .hero::before{left:24px}.cert-road-stage{min-height:440px;aspect-ratio:auto}.cert-road-card{left:5%;right:5%;top:13%;width:auto}.cert-road-help{bottom:10px;font-size:7px}.cert-road-touch{display:flex}.cert-road-hud{font-size:8px}.cert-road-top{font-size:9px}.cert-road-top small{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;}}
+
+/* CAREER INVADERS */
+body.arcade-modal-open{overflow:hidden;}
+#careerInvadersModal{position:fixed;inset:0;z-index:12500;display:none;align-items:center;justify-content:center;background:rgba(0,4,1,.97);padding:18px;}
+#careerInvadersModal.open{display:flex;}
+.career-invaders-shell{width:min(1120px,100%);border:3px solid var(--cyan);background:#030704;box-shadow:0 0 0 5px #101a12,0 0 55px rgba(121,255,155,.2);}
+.career-invaders-top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:3px solid var(--cyan);background:#071109;color:var(--cyan);font-size:12px;letter-spacing:2px;}
+.career-invaders-top small{color:var(--amber);margin-left:10px;}
+.career-invaders-top button{font:inherit;font-size:10px;color:var(--danger);background:#130805;border:2px solid var(--danger);padding:7px 10px;box-shadow:3px 3px 0 #000;}
+.career-invaders-stage{position:relative;aspect-ratio:16/9;min-height:320px;overflow:hidden;background:#020402;}
+#careerInvadersCanvas{display:block;width:100%;height:100%;image-rendering:pixelated;outline:none;}
+.career-invaders-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.22) 3px 5px),radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,.58) 100%);mix-blend-mode:multiply;}
+.career-invaders-hud{position:absolute;top:13px;left:14px;right:14px;display:flex;justify-content:space-between;color:var(--cyan);font-size:10px;letter-spacing:2px;text-shadow:2px 2px #000;pointer-events:none;}
+.career-invaders-hud b{color:var(--amber);}
+.career-overlay{display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:rgba(2,7,3,.82);padding:30px;text-align:center;}
+.career-overlay.show{display:flex;}
+.career-overlay-panel{width:min(600px,92%);padding:28px;border:3px solid var(--amber);background:rgba(4,10,5,.96);box-shadow:8px 8px 0 #000,0 0 28px rgba(255,200,87,.15);}
+.career-overlay h2{font:800 clamp(25px,4vw,48px) 'Orbitron',sans-serif;color:var(--amber);letter-spacing:4px;margin-bottom:13px;text-shadow:4px 4px 0 #1d1403;}
+.career-overlay p{max-width:520px;margin:0 auto 22px;color:#a8baac;font-size:12px;line-height:1.8;}
+.career-overlay-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.career-overlay button,.career-intel-card button{padding:12px 17px;border:2px solid var(--cyan);background:#071109;color:var(--cyan);font:700 11px 'Share Tech Mono',monospace;letter-spacing:2px;box-shadow:4px 4px 0 #000;}
+.career-overlay button:hover,.career-intel-card button:hover{background:var(--cyan);color:#041006;}
+.career-intel-card{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,88%);max-height:82%;overflow:auto;padding:24px;border:3px solid var(--amber);background:rgba(4,10,5,.97);box-shadow:8px 8px 0 #000,0 0 34px rgba(255,200,87,.19);color:#dce9dd;}
+.career-intel-card.show{display:block;animation:careerIntelIn .18s steps(3,end);}
+@keyframes careerIntelIn{from{transform:translate(-50%,-48%);opacity:0}to{transform:translate(-50%,-50%);opacity:1}}
+.career-intel-card .intel-kicker{color:var(--amber);font-size:10px;letter-spacing:3px;margin-bottom:8px;}
+.career-intel-card h2{font:800 clamp(23px,4vw,42px) 'Orbitron',sans-serif;color:var(--cyan);letter-spacing:3px;margin:0 0 7px;}
+.career-intel-card h3{font:700 16px 'Rajdhani',sans-serif;text-transform:uppercase;letter-spacing:2px;color:#dce9dd;margin:0 0 6px;}
+.career-intel-card .intel-period{display:inline-block;color:#091108;background:var(--amber);padding:5px 8px;font-size:9px;letter-spacing:2px;margin-bottom:13px;}
+.career-intel-card p{color:#93a899;font-size:11px;line-height:1.7;margin-bottom:13px;}
+.career-intel-card h4{font-size:10px;color:var(--amber);letter-spacing:3px;margin:13px 0 7px;border-bottom:1px dashed rgba(121,255,155,.3);padding-bottom:5px;}
+.career-intel-card ul{padding-left:18px;color:#b8c9bb;font-size:10px;line-height:1.7;}
+.intel-tech{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.intel-tech span{border:1px solid rgba(121,255,155,.45);padding:5px 7px;color:var(--cyan);font-size:9px;}
+.career-invaders-touch{display:none;position:absolute;left:12px;right:12px;bottom:35px;justify-content:space-between;pointer-events:none;}
+.career-invaders-touch button{pointer-events:auto;min-width:74px;padding:12px 14px;background:rgba(3,10,5,.82);border:2px solid var(--cyan);color:var(--cyan);font:700 11px 'Share Tech Mono',monospace;}
+.career-invaders-touch button[data-invader="Space"]{border-color:var(--amber);color:var(--amber);}
+@media(max-width:760px){
+  .career-invaders-stage{min-height:500px;aspect-ratio:auto}.career-invaders-top{font-size:9px}.career-invaders-top small{display:none}.career-invaders-hud{font-size:7px}.career-invaders-touch{display:flex}.career-overlay-panel{padding:20px}.career-intel-card{width:90%;max-height:72%;padding:17px}
+}
+
+/* CAREER QUEST / ORIGINAL 8-BIT PLATFORMER */
+#careerPlatformerModal{position:fixed;inset:0;z-index:13000;display:none;align-items:center;justify-content:center;background:rgba(0,4,1,.97);padding:18px}
+#careerPlatformerModal.open{display:flex}
+.career-platformer-shell{width:min(1120px,100%);border:3px solid var(--amber);background:#030704;box-shadow:0 0 0 5px #101a12,0 0 55px rgba(255,200,87,.18)}
+.career-platformer-top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:3px solid var(--amber);background:#100d05;color:var(--amber);font-size:12px;letter-spacing:2px}
+.career-platformer-top small{color:var(--cyan);margin-left:10px}
+.career-platformer-top button{font:inherit;font-size:10px;color:var(--danger);background:#130805;border:2px solid var(--danger);padding:7px 10px;box-shadow:3px 3px 0 #000}
+.career-platformer-stage{position:relative;aspect-ratio:16/9;min-height:320px;overflow:hidden;background:#071729}
+#careerPlatformerCanvas{display:block;width:100%;height:100%;image-rendering:pixelated;outline:none}
+.career-platformer-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.18) 3px 5px),radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.48) 100%);mix-blend-mode:multiply}
+.career-platformer-hud{position:absolute;top:13px;left:14px;right:14px;display:flex;justify-content:space-between;color:#fff5cf;font-size:10px;letter-spacing:2px;text-shadow:2px 2px #000;pointer-events:none}
+.career-platformer-hud b{color:var(--amber)}
+.platformer-overlay{display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:rgba(3,10,18,.82);padding:30px;text-align:center}
+.platformer-overlay.show{display:flex}
+.platformer-overlay-panel{width:min(610px,92%);padding:28px;border:3px solid var(--amber);background:rgba(5,12,17,.97);box-shadow:8px 8px 0 #000}
+.platformer-overlay h2{font:800 clamp(25px,4vw,48px) 'Orbitron',sans-serif;color:var(--amber);letter-spacing:4px;margin-bottom:13px;text-shadow:4px 4px 0 #392600}
+.platformer-overlay p{max-width:530px;margin:0 auto 22px;color:#bad3d9;font-size:12px;line-height:1.8}
+.platformer-overlay button,.platformer-intel-card button{padding:12px 17px;border:2px solid var(--amber);background:#171006;color:var(--amber);font:700 11px 'Share Tech Mono',monospace;letter-spacing:2px;box-shadow:4px 4px 0 #000}
+.platformer-overlay button:hover,.platformer-intel-card button:hover{background:var(--amber);color:#171006}
+.platformer-intel-card{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,88%);max-height:82%;overflow:auto;padding:24px;border:3px solid var(--amber);background:rgba(5,12,17,.98);box-shadow:8px 8px 0 #000,0 0 34px rgba(255,200,87,.18);color:#edf7f8}
+.platformer-intel-card.show{display:block;animation:careerIntelIn .18s steps(3,end)}
+.platformer-kicker{color:var(--amber);font-size:10px;letter-spacing:3px;margin-bottom:8px}
+.platformer-intel-card h2{font:800 clamp(23px,4vw,42px) 'Orbitron',sans-serif;color:#79ff9b;letter-spacing:3px;margin:0 0 7px}
+.platformer-intel-card h3{font:700 16px 'Rajdhani',sans-serif;text-transform:uppercase;letter-spacing:2px;color:#e6f0e8;margin:0 0 6px}
+.platformer-period{display:inline-block;color:#171006;background:var(--amber);padding:5px 8px;font-size:9px;letter-spacing:2px;margin-bottom:13px}
+.platformer-intel-card p{color:#a9bec3;font-size:11px;line-height:1.7;margin-bottom:13px}
+.platformer-intel-card h4{font-size:10px;color:var(--amber);letter-spacing:3px;margin:13px 0 7px;border-bottom:1px dashed rgba(255,200,87,.35);padding-bottom:5px}
+.platformer-intel-card ul{padding-left:18px;color:#c5d5d8;font-size:10px;line-height:1.7}
+.platformer-tech{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}.platformer-tech span{border:1px solid rgba(121,255,155,.45);padding:5px 7px;color:#79ff9b;font-size:9px}
+.career-platformer-help{position:absolute;left:50%;bottom:11px;transform:translateX(-50%);white-space:nowrap;color:rgba(255,245,207,.74);font-size:9px;letter-spacing:2px;text-shadow:2px 2px #000}
+.career-platformer-touch{display:none;position:absolute;left:12px;right:12px;bottom:34px;justify-content:space-between;pointer-events:none}
+.career-platformer-touch button{pointer-events:auto;min-width:74px;padding:12px 14px;background:rgba(5,12,17,.84);border:2px solid var(--amber);color:var(--amber);font:700 11px 'Share Tech Mono',monospace}
+@media(max-width:760px){.career-platformer-stage{min-height:500px;aspect-ratio:auto}.career-platformer-top{font-size:9px}.career-platformer-top small{display:none}.career-platformer-hud{font-size:7px}.career-platformer-touch{display:flex}.career-platformer-help{font-size:7px}.platformer-intel-card{width:90%;max-height:72%;padding:17px}}
