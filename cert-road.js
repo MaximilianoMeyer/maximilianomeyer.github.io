@@ -117,7 +117,7 @@
     signSound();
     setTimeout(()=>{if(active===index){card.classList.remove('show');active=-1;}},4300);
   }
-  function reset(){roadTime=0;carX=0;speed=26;passed=0;active=-1;signs.forEach((s,i)=>{s.z=1400+i*1050;s.shown=false;});card.classList.remove('show');updateHud();}
+  function reset(){roadTime=0;carX=0;speed=35;passed=0;active=-1;signs.forEach((s,i)=>{s.z=1400+i*1050;s.shown=false;});card.classList.remove('show');updateHud();}
   function updateHud(){document.getElementById('roadSpeed').textContent=String(Math.round(speed)).padStart(3,'0');document.getElementById('roadProgress').textContent=`${passed}/${certs.length}`;}
   function update(dt){
     const target=keys.boost?46:26;speed+=(target-speed)*Math.min(1,dt*2.4);
