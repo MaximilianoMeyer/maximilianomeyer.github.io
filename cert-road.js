@@ -8,7 +8,7 @@
 
   const ctx = canvas.getContext('2d', { alpha: false });
   ctx.imageSmoothingEnabled = false;
-  const W = 960, H = 480;
+  const W = 960, H = 500;
   canvas.width = W; canvas.height = H;
 
   const certs = [
