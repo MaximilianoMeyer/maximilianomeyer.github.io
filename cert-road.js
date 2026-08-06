@@ -8,7 +8,7 @@
 
   const ctx = canvas.getContext('2d', { alpha: false });
   ctx.imageSmoothingEnabled = false;
-  const W = 960, H = 540;
+  const W = 1024, H = 768;
   canvas.width = W; canvas.height = H;
 
   const certs = [
@@ -19,7 +19,7 @@
   ];
 
   const keys = { left:false, right:false, boost:false };
-  let running=false, raf=0, last=0, roadTime=0, carX=0, speed=26, passed=0, active=-1;
+  let running=false, raf=0, last=0, roadTime=0, carX=0, speed=36, passed=0, active=-1;
   let musicTimer=null, musicStep=0;
   let audioCtx=null;
   const signs = certs.map((c,i)=>({ cert:c, z:1400+i*1050, side:i%2===0?-1:1, shown:false }));
