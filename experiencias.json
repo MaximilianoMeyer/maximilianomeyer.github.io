@@ -1,0 +1,56 @@
+[
+  {
+    "id": "tecban-2020",
+    "empresa": "TecBan",
+    "periodo": {"inicio": "2020-01", "fim": "2023-11"},
+    "cargo": "Senior Cybersecurity Engineer",
+    "descricao": "Atuação em segurança ofensiva, testes de intrusão e operações de Red Team.",
+    "impactos": ["Mais de 50 vulnerabilidades críticas identificadas", "5 operações de Red Team realizadas", "55% de mitigação dos riscos"],
+    "tecnologias": ["Python", "Burp Suite", "Nmap", "Metasploit", "Active Directory", "BloodHound"]
+  },
+  {
+    "id": "empresa-2",
+    "empresa": "Empresa 2",
+    "periodo": {"inicio": "2023-12", "fim": "atual"},
+    "cargo": "Senior Red Team Specialist",
+    "descricao": "Planejamento e execução de campanhas ofensivas contra aplicações, infraestrutura e identidades.",
+    "impactos": ["Operações de Red Team ponta a ponta", "Desenvolvimento de ferramentas ofensivas internas", "Mentoria técnica de profissionais juniores"],
+    "tecnologias": ["Cobalt Strike", "Sliver", "Impacket", "NetExec", "PowerShell", "Kerberos"]
+  },
+  {
+    "id": "empresa-3",
+    "empresa": "Empresa 3",
+    "periodo": {"inicio": "2018-01", "fim": "2019-12"},
+    "cargo": "Penetration Tester",
+    "descricao": "Testes de intrusão em aplicações web, APIs, redes e ambientes corporativos.",
+    "impactos": ["Falhas críticas identificadas em aplicações", "Avaliações de Active Directory", "Relatórios técnicos e executivos"],
+    "tecnologias": ["Burp Suite", "OWASP ZAP", "SQLmap", "FFUF", "Nuclei", "Wireshark"]
+  },
+  {
+    "id": "empresa-4",
+    "empresa": "Empresa 4",
+    "periodo": {"inicio": "2016-03", "fim": "2017-12"},
+    "cargo": "Malware Analyst",
+    "descricao": "Análise estática e dinâmica, engenharia reversa e investigação de comportamento malicioso.",
+    "impactos": ["Criação de indicadores de comprometimento", "Análise de famílias de malware", "Apoio à resposta a incidentes"],
+    "tecnologias": ["Ghidra", "IDA Pro", "x64dbg", "Cuckoo Sandbox", "YARA", "Assembly"]
+  },
+  {
+    "id": "empresa-5",
+    "empresa": "Empresa 5",
+    "periodo": {"inicio": "2014-02", "fim": "2016-02"},
+    "cargo": "Hardware Security Analyst",
+    "descricao": "Testes de segurança em hardware, dispositivos embarcados e interfaces de comunicação.",
+    "impactos": ["Falhas identificadas em dispositivos embarcados", "Análise de firmware e interfaces físicas", "Validação de protocolos de comunicação"],
+    "tecnologias": ["UART", "JTAG", "SPI", "I2C", "Binwalk", "Logic Analyzer"]
+  },
+  {
+    "id": "empresa-6",
+    "empresa": "Empresa 6",
+    "periodo": {"inicio": "2012-01", "fim": "2014-01"},
+    "cargo": "Security Analyst",
+    "descricao": "Análise de vulnerabilidades, monitoramento e resposta a incidentes.",
+    "impactos": ["Apoio à correção de vulnerabilidades", "Análise de eventos de segurança", "Implementação de controles técnicos"],
+    "tecnologias": ["Linux", "Windows Server", "Snort", "Nessus", "Splunk", "Bash"]
+  }
+]
