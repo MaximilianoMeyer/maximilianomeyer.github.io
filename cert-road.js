@@ -23,6 +23,7 @@
     { code:'CRTA', name:'Certified Red Team Analyst', issuer:'CyberWarFare Labs', year:'ADVERSARY SECTOR 03' },
     { code:'MCRTA', name:'Multi-Cloud Red Team Analyst', issuer:'CyberWarFare Labs', year:'CLOUD SECTOR 04' },
     { code:'C3SA', name:'Certified Cybersecurity Specialist', issuer:'CyberWarFare Labs', year:'SHADOW SECTOR 09' },
+    { code:'CPTS', name:'Certified Penetration Test Specialist', issuer:'HackTheBox', year:'Frontline SECTOR 09' },
     { code:'AD-RTS', name:'Active Directory Red Team Specialist', issuer:'CyberWarFare Labs', year:'2025' },
     { code:'CRT-ID', name:'Certified Red Team Infraestructure Developer', issuer:'CyberWarFare Labs', year:'2025' },
     { code:'K8S-RTA', name:'Kubernets Red Team Analyst', issuer:'CyberWarFare Labs', year:'2025' },
